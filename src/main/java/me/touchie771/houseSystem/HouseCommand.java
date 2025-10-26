@@ -8,6 +8,12 @@ import org.bukkit.entity.Player;
 @Command(name = "house")
 public class HouseCommand {
 
+    private final HouseDataManager houseDataManager;
+
+    public HouseCommand(HouseSystem plugin) {
+        houseDataManager = new HouseDataManager(plugin);
+    }
+
     @Execute(name = "add")
     public void addHouse(@Arg Player player) {
 
