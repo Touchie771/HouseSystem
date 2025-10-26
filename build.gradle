@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = 'me.touchie771'
@@ -12,10 +13,17 @@ repositories {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
+    // Required for LiteCommands artifacts
+    maven {
+        name = "panda-repo"
+        url = uri("https://repo.panda-lang.org/releases")
+    }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.10-R0.1-SNAPSHOT")
+    // LiteCommands for Bukkit/Paper platform (shaded into final jar)
+    implementation("dev.rollczi:litecommands-bukkit:3.10.6")
 }
 
 tasks {
@@ -25,6 +33,14 @@ tasks {
         // Your plugin's jar (or shadowJar if present) will be used automatically.
         minecraftVersion("1.21")
     }
+    // Make the shaded jar the default artifact and add relocation for safety
+    shadowJar {
+        archiveClassifier.set("")
+        // Relocate LiteCommands to avoid classpath conflicts on servers
+        relocate("dev.rollczi", "${project.group}.shade.dev.rollczi")
+    }
+    // Ensure assemble/build produce the shaded artifact
+    assemble { dependsOn(shadowJar) }
 }
 
 def targetJavaVersion = 21
@@ -43,6 +59,8 @@ tasks.withType(JavaCompile).configureEach {
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
         options.release.set(targetJavaVersion)
     }
+    // Needed by LiteCommands to retain parameter names
+    options.compilerArgs += ['-parameters']
 }
 
 processResources {

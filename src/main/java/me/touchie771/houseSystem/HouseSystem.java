@@ -1,17 +1,26 @@
 package me.touchie771.houseSystem;
 
+import dev.rollczi.litecommands.LiteCommands;
+import dev.rollczi.litecommands.bukkit.LiteBukkitFactory;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class HouseSystem extends JavaPlugin {
 
+    private LiteCommands<CommandSender> liteCommands;
+
     @Override
     public void onEnable() {
         // Plugin startup logic
-
+        this.liteCommands = LiteBukkitFactory.builder(getName())
+            .commands()
+            .build();
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        if (liteCommands != null) {
+            liteCommands.unregister();
+        }
     }
 }
