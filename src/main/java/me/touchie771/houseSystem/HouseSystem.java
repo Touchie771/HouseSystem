@@ -13,7 +13,7 @@ public final class HouseSystem extends JavaPlugin {
     public void onEnable() {
         saveResource("houses.yml", false);
         this.liteCommands = LiteBukkitFactory.builder(getName())
-            .commands()
+            .commands(new HouseCommand(this))
             .build();
     }
 
