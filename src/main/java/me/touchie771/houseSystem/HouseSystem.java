@@ -8,10 +8,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class HouseSystem extends JavaPlugin {
 
     private LiteCommands<CommandSender> liteCommands;
+    private final HouseDataManager houseDataManager = new HouseDataManager(this);
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
+        saveResource("houses.yml", false);
         this.liteCommands = LiteBukkitFactory.builder(getName())
             .commands()
             .build();
@@ -22,5 +23,9 @@ public final class HouseSystem extends JavaPlugin {
         if (liteCommands != null) {
             liteCommands.unregister();
         }
+    }
+
+    public HouseDataManager getHouseDataManager() {
+        return houseDataManager;
     }
 }
